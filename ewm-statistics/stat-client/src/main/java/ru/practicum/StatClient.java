@@ -3,7 +3,7 @@ package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ public class StatClient {
                 + "&unique=" + unique);
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return new ResponseEntity<>(response.body(), HttpStatusCode.valueOf(response.statusCode()));
+        return new ResponseEntity<>(response.body(), HttpStatus.valueOf(response.statusCode()));
     }
 
     public int saveHit(HitDto hit) throws IOException, InterruptedException {
