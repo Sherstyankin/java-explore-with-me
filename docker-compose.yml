@@ -1,12 +1,12 @@
 version: '3.1'
 services:
-  ewm-statistics:
+  stats-server:
     build: ./ewm-statistics/stat-service
     container_name: ewm-statistics
     ports:
       - "9090:9090"
     depends_on:
-      - ewm-statistics-db
+      - stats-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-statistics-db:5432/ewmstat
       - POSTGRES_USER=root
@@ -16,7 +16,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
 
-  ewm-statistics-db:
+  stats-db:
     image: postgres:14-alpine
     container_name: ewm-statistics-db
     ports:
@@ -30,15 +30,15 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
 
-  ewm-main-service:
+  ewm-service:
     build: ./ewm-main-service
     container_name: ewm-main-service
     ports:
       - "8080:8080"
     depends_on:
-      - ewm-main-service-db
+      - ewm-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-main-service-db:5432/ewm
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - POSTGRES_DRIVER=org.postgresql.Driver
@@ -46,9 +46,11 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
 
-  ewm-main-service-db:
+  ewm-db:
     image: postgres:14-alpine
     container_name: ewm-main-service-db
+    depends_on:
+      - stats-db
     ports:
       - "6541:5432"
     environment:
