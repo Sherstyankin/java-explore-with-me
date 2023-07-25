@@ -34,8 +34,6 @@ public class StatClient {
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return new ResponseEntity<>(response.body(), HttpStatusCode.valueOf(response.statusCode()));
-        //ResponseEntity<Object> mappedResponse = mapper.readValue((JsonParser) response, ResponseEntity.class);
-        //return mappedResponse;
     }
 
     public int saveHit(HitDto hit) throws IOException, InterruptedException {
