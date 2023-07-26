@@ -1,6 +1,8 @@
 package ru.practicum;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.net.http.HttpResponse;
 @RequiredArgsConstructor
 public class StatClient {
     private final HttpClient client = HttpClient.newHttpClient();
+    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @Value("${service.url}")
     private final String baseUrl;
@@ -34,7 +37,8 @@ public class StatClient {
 
     public int saveHit(HitDto hit) throws IOException, InterruptedException {
         URI url = URI.create(baseUrl + "/hit");
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(String.valueOf(hit));
+        final HttpRequest.BodyPublisher body = HttpRequest
+                .BodyPublishers.ofString(mapper.writeValueAsString(hit));
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return response.statusCode();

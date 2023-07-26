@@ -22,7 +22,7 @@ public class StatController {
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveHit(@RequestBody HitDto hitDto) {
-        log.info("Сохранить обращение в статистику");
+        log.info("Сохранить в статистику обращение: {}", hitDto);
         statService.saveHit(hitDto);
     }
 
@@ -33,7 +33,7 @@ public class StatController {
                                             LocalDateTime end,
                                             @RequestParam(required = false) List<String> uris,
                                             @RequestParam(defaultValue = "false") boolean unique) {
-        log.info("Получить статистику");
+        log.info("Получить статистику c {} по {}", start, end);
         return statService.getStatistics(start, end, uris, unique);
     }
 }
