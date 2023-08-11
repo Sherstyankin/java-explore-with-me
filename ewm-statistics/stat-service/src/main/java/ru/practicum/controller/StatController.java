@@ -34,6 +34,8 @@ public class StatController {
                                             @RequestParam(required = false) List<String> uris,
                                             @RequestParam(defaultValue = "false") boolean unique) {
         log.info("Получить статистику c {} по {}", start, end);
-        return statService.getStatistics(start, end, uris, unique);
+        List<ViewStatsDto> viewStatsDtos = statService.getStatistics(start, end, uris, unique);
+        log.info("Статистика c {} по {} получена", start, end);
+        return viewStatsDtos;
     }
 }
