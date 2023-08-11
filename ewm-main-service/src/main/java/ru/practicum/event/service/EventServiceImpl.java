@@ -275,7 +275,7 @@ public class EventServiceImpl implements EventService {
                 .and(byOnlyAvailable(onlyAvailable));
         List<Event> events = eventRepository.findAll(predicate, page).getContent();
         List<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
-        viewService.saveHit("/events/", ip);
+        viewService.saveHit("/events", ip);
         Map<Long, Long> views = viewService.getViews(eventIds);
         Map<Long, Long> confirmedRequests = eventRequestService.getConfirmedRequests(eventIds);
         List<EventShortDto> eventShortDtos = EventMapper.mapToEventShortDto(events, views, confirmedRequests);

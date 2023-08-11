@@ -7,7 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.dto.ApiError;
+import ru.practicum.ApiError;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.exception.ValidationException;
@@ -59,15 +59,4 @@ public class ErrorHandler {
                 .message(e.getMessage())
                 .build();
     }
-
-   /* @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleConflictException(final ConflictException e) {
-        log.warn("Получен статус 409 Conflict: {}", e.getMessage(), e);
-        return ApiError.builder()
-                .status(HttpStatus.CONFLICT)
-                .reason("Конфликт данных.")
-                .message(e.getMessage())
-                .build();
-    }*/
 }
