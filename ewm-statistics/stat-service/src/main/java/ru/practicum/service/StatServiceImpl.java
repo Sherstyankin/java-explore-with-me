@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.HitDto;
 import ru.practicum.ViewStatsDto;
 import ru.practicum.entity.Hit;
+import ru.practicum.exception.ValidationException;
 import ru.practicum.mapper.StatMapper;
 import ru.practicum.repository.StatRepository;
 
@@ -34,6 +35,7 @@ public class StatServiceImpl implements StatService {
                                             LocalDateTime end,
                                             List<String> uris,
                                             boolean unique) {
+        checkTime(start, end);
         if (uris != null && !uris.isEmpty() && unique) {
             log.info("Получить статистику уникальных обращений, согласно списку URI: {}", uris);
             return statRepository.getDistinctStatisticsOfUris(start, end, uris);
@@ -46,6 +48,14 @@ public class StatServiceImpl implements StatService {
         } else {
             log.info("Получить статистику всех обращений");
             return statRepository.getStatistics(start, end);
+        }
+    }
+
+    private void checkTime(LocalDateTime start, LocalDateTime end) {
+        if (start.isAfter(end) || start.equals(end)) {
+            log.error("Время окончания: {} не может быть раньше начала: {}", end, start);
+            throw new ValidationException("Время окончания: " + end + " не может быть раньше начала: " +
+                    start);
         }
     }
 }

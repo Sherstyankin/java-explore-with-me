@@ -1,46 +1,65 @@
 package ru.practicum;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class StatClient {
-    private final HttpClient client = HttpClient.newHttpClient();
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    @Value("${service.url}")
-    private final String baseUrl;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final String BASE_URL = "http://stats-server:9090"; // пробовал через переменную в properties, но не подтягивается
+    private final WebClient webClient = WebClient.builder().build();
 
-    public ResponseEntity<Object> getStatistics(String start,
-                                                String end,
-                                                String urisString,
-                                                boolean unique) throws IOException, InterruptedException {
-        URI url = URI.create(baseUrl + "/stats" + "?start=" + start + "&end=" + end + "&uris=" + urisString
-                + "&unique=" + unique);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return new ResponseEntity<>(response.body(), HttpStatus.valueOf(response.statusCode()));
+    public ResponseEntity<Object> saveHit(HitDto dto) {
+
+        return webClient.post()
+                .uri(BASE_URL + "/hit")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(dto)
+                .retrieve()
+                .toEntity(Object.class)
+                .block();
     }
 
-    public int saveHit(HitDto hit) throws IOException, InterruptedException {
-        URI url = URI.create(baseUrl + "/hit");
-        final HttpRequest.BodyPublisher body = HttpRequest
-                .BodyPublishers.ofString(mapper.writeValueAsString(hit));
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.statusCode();
+    public List<ViewStatsDto> getStatistics(LocalDateTime start,
+                                            LocalDateTime end,
+                                            List<String> urisList,
+                                            boolean unique) {
+        String uri;
+        if (urisList.isEmpty()) {
+            uri = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/stats")
+                    .queryParam("start", start.format(formatter))
+                    .queryParam("end", end.format(formatter))
+                    .queryParam("unique", unique)
+                    .build()
+                    .toUriString();
+        } else {
+            uri = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/stats")
+                    .queryParam("start", start.format(formatter))
+                    .queryParam("end", end.format(formatter))
+                    .queryParam("uris", urisList)
+                    .queryParam("unique", unique)
+                    .build()
+                    .toUriString();
+        }
+
+        return Objects.requireNonNull(webClient.get()
+                .uri(uri)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntityList(ViewStatsDto.class)
+                .block()).getBody();
     }
 }

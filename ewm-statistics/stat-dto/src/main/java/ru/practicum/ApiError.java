@@ -5,26 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HitDto {
+public class ApiError {
 
-    @NotBlank
-    private String app;
+    private HttpStatus status;
 
-    @NotBlank
-    private String uri;
+    private String reason;
 
-    @NotBlank
-    private String ip;
+    private String message;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Builder.Default
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime timestamp = LocalDateTime.now();
 }
