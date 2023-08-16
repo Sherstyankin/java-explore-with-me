@@ -28,7 +28,10 @@ import ru.practicum.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -103,6 +106,23 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Long id) {
         findCommentById(id);
         commentRepository.deleteById(id);
+    }
+
+    @Override
+    public Map<Long, List<Comment>> getAndMapCommentsByEventIds(List<Long> eventIds) {
+        if (eventIds == null || eventIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return commentRepository.findAllByPublishedStateAndEventIn(eventIds).stream()
+                .collect(Collectors.groupingBy(comment -> comment.getEvent().getId()));
+    }
+
+    @Override
+    public List<Comment> getCommentsByEventId(Long eventId) {
+        if (eventId == null) {
+            return Collections.emptyList();
+        }
+        return commentRepository.findAllByPublishedStateAndEventId(eventId);
     }
 
     private Comment findCommentById(Long id) {

@@ -8,7 +8,6 @@ import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.request.NewEventDto;
 import ru.practicum.dto.request.UpdateEventAdminRequest;
 import ru.practicum.dto.request.UpdateEventUserRequest;
-import ru.practicum.entity.Event;
 import ru.practicum.enums.EventState;
 import ru.practicum.enums.SortType;
 
@@ -52,6 +51,4 @@ public interface EventService {
                                   String ip);
 
     EventFullDto getEventById(Long id, String ip);
-
-    Event findEventById(Long eventId);
 }
