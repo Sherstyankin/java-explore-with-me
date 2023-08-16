@@ -4,6 +4,7 @@ import ru.practicum.dto.CommentDto;
 import ru.practicum.dto.request.NewCommentDto;
 import ru.practicum.dto.request.UpdateCommentDto;
 import ru.practicum.entity.Comment;
+import ru.practicum.entity.Event;
 import ru.practicum.enums.AdminCommentStateAction;
 import ru.practicum.enums.CommentState;
 
@@ -24,7 +25,7 @@ public interface CommentService {
 
     CommentDto moderateComment(Long id, AdminCommentStateAction action);
 
-    CommentDto addComment(NewCommentDto dto);
+    CommentDto addComment(NewCommentDto dto, Event event);
 
     CommentDto updateComment(UpdateCommentDto dto);
 

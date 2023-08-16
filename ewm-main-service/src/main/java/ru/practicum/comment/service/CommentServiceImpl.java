@@ -20,7 +20,6 @@ import ru.practicum.entity.User;
 import ru.practicum.enums.AdminCommentStateAction;
 import ru.practicum.enums.CommentState;
 import ru.practicum.enums.EventState;
-import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.mapper.CommentMapper;
@@ -40,7 +39,6 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final EventRepository eventRepository;
     private final UserService userService;
 
     @Override
@@ -83,9 +81,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto addComment(NewCommentDto dto) {
+    public CommentDto addComment(NewCommentDto dto, Event event) {
         User author = userService.getUserById(dto.getAuthor());
-        Event event = findEventById(dto.getEvent());
         checkIfEventPublished(event);
         Comment comment = commentRepository.save(CommentMapper.mapToComment(dto, event, author));
         return CommentMapper.mapToCommentDto(comment);
@@ -130,11 +127,6 @@ public class CommentServiceImpl implements CommentService {
     private Comment findCommentById(Long id) {
         return commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Комментарий с ID:" + id + " не найден."));
-    }
-
-    private Event findEventById(Long eventId) {
-        return eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Событие по ID: " + eventId + " не найдено."));
     }
 
     private void checkIfEventPublished(Event event) {

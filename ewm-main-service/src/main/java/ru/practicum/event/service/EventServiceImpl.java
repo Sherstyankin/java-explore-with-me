@@ -318,7 +318,8 @@ public class EventServiceImpl implements EventService {
         return EventMapper.mapToEventFullDto(event, views, confirmedRequests, commentDtos);
     }
 
-    private Event findEventById(Long eventId) {
+    @Override
+    public Event findEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Событие по ID: " + eventId + " не найдено."));
     }

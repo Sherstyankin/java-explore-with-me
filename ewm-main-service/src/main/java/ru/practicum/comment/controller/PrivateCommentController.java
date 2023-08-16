@@ -8,6 +8,8 @@ import ru.practicum.comment.service.CommentService;
 import ru.practicum.dto.CommentDto;
 import ru.practicum.dto.request.NewCommentDto;
 import ru.practicum.dto.request.UpdateCommentDto;
+import ru.practicum.entity.Event;
+import ru.practicum.event.service.EventService;
 
 import javax.validation.Valid;
 
@@ -18,12 +20,14 @@ import javax.validation.Valid;
 public class PrivateCommentController {
 
     private final CommentService commentService;
+    private final EventService eventService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addComment(@RequestBody @Valid NewCommentDto dto) {
         log.info("Добавить комментарий: {}", dto);
-        return commentService.addComment(dto);
+        Event event = eventService.findEventById(dto.getEvent());
+        return commentService.addComment(dto, event);
     }
 
     @PatchMapping
