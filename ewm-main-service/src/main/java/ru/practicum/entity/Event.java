@@ -1,6 +1,5 @@
 package ru.practicum.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,14 +27,12 @@ public class Event {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Builder.Default
     @Column(name = "created_on")
     private LocalDateTime createdOn = LocalDateTime.now();
 
     private String description;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "event_date")
     private LocalDateTime eventDate;
 
@@ -52,7 +49,6 @@ public class Event {
     @Column(name = "participant_limit")
     private Integer participantLimit;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
