@@ -109,6 +109,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<Long, List<Comment>> getAndMapCommentsByEventIds(List<Long> eventIds) {
         if (eventIds == null || eventIds.isEmpty()) {
             return Collections.emptyMap();
@@ -118,6 +119,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Comment> getCommentsByEventId(Long eventId) {
         if (eventId == null) {
             return Collections.emptyList();
