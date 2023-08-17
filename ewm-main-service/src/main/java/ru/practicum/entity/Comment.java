@@ -4,36 +4,41 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.enums.ParticipationStatus;
+import ru.practicum.enums.CommentState;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "requests")
+@Table(name = "comments")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Request {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Builder.Default
-    @Column(name = "created_on")
-    private LocalDateTime created = LocalDateTime.now();
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requester_id")
-    private User requester;
+    @JoinColumn(name = "author_id")
+    private User author;
+
+    @Column(name = "created_on")
+    @Builder.Default
+    private LocalDateTime created = LocalDateTime.now();
+
+    @Column(name = "published_on")
+    private LocalDateTime published;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ParticipationStatus status = ParticipationStatus.PENDING;
+    private CommentState state = CommentState.PENDING;
 }

@@ -1,6 +1,7 @@
 package ru.practicum.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,13 +17,35 @@ import ru.practicum.exception.ValidationException;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(final ValidationException e) {
         log.warn("Получен статус 400 Bad request: {}", e.getMessage(), e);
         return ApiError.builder()
                 .status(HttpStatus.BAD_REQUEST)
-                .reason("Запрос составлен некорректно.")
+                .reason("Передано невалидное значение.")
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        log.warn("Получен статус 400 Bad request: {}", e.getMessage(), e);
+        return ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .reason("Передано невалидное значение.")
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleConversionFailedException(final ConversionFailedException e) {
+        log.warn("Получен статус 400 Bad request: {}", e.getMessage(), e);
+        return ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .reason("Передано невалидное значение.")
                 .message(e.getMessage())
                 .build();
     }

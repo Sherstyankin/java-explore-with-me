@@ -14,10 +14,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ParticipationRequestDto {
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
+
     private Long event; // eventId
+
     private Long id;
+
     private Long requester; // userId
+
     private ParticipationStatus status;
 }
